@@ -681,7 +681,7 @@ func (client *RTSPClient) RTPDemuxer(payloadRAW *[]byte) ([]*av.Packet, bool) {
 								Time:            time.Duration(timestamp/90) * time.Millisecond,
 							})
                             if  naluTypef == 5 {
-								client.Println(">>>>>>>> ret KeyFrame!")
+								// client.Println(">>>>>>>> ret KeyFrame!")
 							}
 						}
 					}
