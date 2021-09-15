@@ -98,6 +98,7 @@ type RTSPClientOptions struct {
 	ReadWriteTimeout time.Duration
 	DisableAudio     bool
 	OutgoingProxy    bool
+	Keepalive        time.Duration
 }
 
 func Dial(options RTSPClientOptions) (*RTSPClient, error) {
@@ -114,6 +115,10 @@ func Dial(options RTSPClientOptions) (*RTSPClient, error) {
 		options:             options,
 		AudioTimeScale:      8000,
 		keepalive:           getKeepalive(60),
+	}
+	keepalive := int(client.options.Keepalive.Seconds())
+	if keepalive > 0{
+		client.keepalive = getKeepalive(keepalive)
 	}
 	client.headers["User-Agent"] = "Lavf58.20.100"
 	err := client.parseURL(html.UnescapeString(client.options.URL))
@@ -257,7 +262,7 @@ func (client *RTSPClient) startStream() {
 			return
 		}
 		if int(time.Now().Sub(timer).Seconds()) > client.keepalive {
-			err := client.request(GET_PARAMETER, map[string]string{"Require": "implicit-play"}, client.control, false, true)
+			err := client.request(OPTIONS, map[string]string{"Require": "implicit-play"}, client.control, false, true)
 			if err != nil {
 				client.Println("RTSP Client RTP keep-alive", err)
 				return
