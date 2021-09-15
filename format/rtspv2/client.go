@@ -641,14 +641,47 @@ func (client *RTSPClient) RTPDemuxer(payloadRAW *[]byte) ([]*av.Packet, bool) {
 					client.CodecUpdatePPS(nal)
 				case naluType == 24:// STAP-A
 				    //add by zhangming
-					retmap = append(retmap, &av.Packet{
-						Data:            append(binSize(len(content[offset:])), content[offset:]...),
-						CompositionTime: time.Duration(1) * time.Millisecond,
-						Duration:        time.Duration(float32(timestamp-client.PreVideoTS)/90) * time.Millisecond,
-						Idx:             client.videoIDX,
-						IsKeyFrame:      false,
-						Time:            time.Duration(timestamp/90) * time.Millisecond,
-					})
+					size := len(content[offset:])
+				    	if (size < 3) { 
+        					//对于聚合的NAL单元包（STAP-A）来说，数据最小的长度位３个字节，其中data[0]表明是聚合的
+        					//NAL单元包（STAP-A）即，nalType = data[0] & 0x1f　== 28
+						//data[1]和data[2]用16个bit位表示的一个16位整数的值表示紧跟着第一个NAL单元的长度
+        					client.Println("Discarding too small STAP-A packet.");
+        					return false;
+    					}
+					data := content[offset+1]
+					offset1 := offset+1
+					size-- 
+					for true {
+						if size <3 {
+						    break
+						}
+						//前两个字节表示的16位整数的值表示的是该NAL单元的长度，不包括这两个字节        
+        					size_t nalSize = (data[0] << 8) | data[1]
+        					if size < nalSize + 2 {
+            						//标识一个NAL单元的范围位是2+nalSize，２表示的是该NAL单元的长度，nalSize
+            						//是实际一个NAL单元的长度
+            						client.Println("Discarding malformed STAP-A packet.")
+            						break
+        					}
+						
+						retmap = append(retmap, &av.Packet{
+							Data:            append(binSize(nalSize, data[2:2+nalSize]...),
+							CompositionTime: time.Duration(1) * time.Millisecond,
+							Duration:        time.Duration(float32(timestamp-client.PreVideoTS)/90) * time.Millisecond,
+							Idx:             client.videoIDX,
+							IsKeyFrame:      false,
+							Time:            time.Duration(timestamp/90) * time.Millisecond,
+						})
+						
+						//迭代进行处理下一个NAL单元
+						offset1 = offset1 + 2 + nalSize
+        					data = content[offset1]
+        					size = size - 2 - nalSize
+					}
+					if size!=0 {
+						client.Println("Unexpected padding at end of STAP-A packet.");
+					}
 					// client.Println("24 Type need add next version report https://github.com/zhangm168520/vdk")
 				case naluType == 28:
 					fuIndicator := content[offset]
@@ -690,9 +723,6 @@ func (client *RTSPClient) RTPDemuxer(payloadRAW *[]byte) ([]*av.Packet, bool) {
 								IsKeyFrame:      naluTypef == 5,
 								Time:            time.Duration(timestamp/90) * time.Millisecond,
 							})
-                            if  naluTypef == 5 {
-								// client.Println(">>>>>>>> ret KeyFrame!")
-							}
 						}
 					}
 				default:
