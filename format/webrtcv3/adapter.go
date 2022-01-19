@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
+	"github.com/zhangm168/vdk/codec/h265parser"
 	"log"
 	"time"
 
 	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/codec/h264parser"
 	"github.com/pion/webrtc/v3/pkg/media"
 )
 
@@ -118,6 +119,16 @@ func (element *Muxer) WriteHeader(streams []av.CodecData, sdp64 string) (string,
 				if _, err = peerConnection.AddTrack(track); err != nil {
 					return "", err
 				}
+			}else if i2.Type() == av.H265 {
+				track, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{
+					MimeType: "video/h265",
+				}, "pion-rtsp-video", "pion-rtsp-video")
+				if err != nil {
+					return "", err
+				}
+				if _, err = peerConnection.AddTrack(track); err != nil {
+					return "", err
+				}
 			}
 		} else if i2.Type().IsAudio() {
 			AudioCodecString := webrtc.MimeTypePCMA
@@ -217,6 +228,15 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 			} else {
 				pkt.Data = pkt.Data[4:]
 			}
+			break
+		case av.H265:
+			codec := tmp.codec.(h265parser.CodecData)
+			if pkt.IsKeyFrame {
+				pkt.Data = append([]byte{0, 0, 0, 1}, bytes.Join([][]byte{codec.SPS(), codec.PPS(), codec.VPS(), pkt.Data[4:]}, []byte{0, 0, 0, 1})...)
+			} else {
+				pkt.Data = pkt.Data[4:]
+			}
+			break
 		case av.PCM_ALAW:
 		case av.OPUS:
 		case av.PCM_MULAW:

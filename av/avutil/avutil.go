@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/zhangm168520/vdk/av"
+	"github.com/zhangm168/vdk/av"
 )
 
 type HandlerDemuxer struct {

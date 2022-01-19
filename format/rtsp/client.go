@@ -17,13 +17,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/av/avutil"
-	"github.com/zhangm168520/vdk/codec"
-	"github.com/zhangm168520/vdk/codec/aacparser"
-	"github.com/zhangm168520/vdk/codec/h264parser"
-	"github.com/zhangm168520/vdk/format/rtsp/sdp"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/av/avutil"
+	"github.com/zhangm168/vdk/codec"
+	"github.com/zhangm168/vdk/codec/aacparser"
+	"github.com/zhangm168/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/format/rtsp/sdp"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 var ErrCodecDataChange = fmt.Errorf("rtsp: codec data change, please call HandleCodecDataChange()")

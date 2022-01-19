@@ -1,8 +1,8 @@
 package fmp4io
 
 import (
-	"github.com/zhangm168520/vdk/format/fmp4/esio"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/format/fmp4/esio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 const MP4A = Tag(0x6d703461)

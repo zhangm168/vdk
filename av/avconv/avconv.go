@@ -5,10 +5,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/av/avutil"
-	"github.com/zhangm168520/vdk/av/pktque"
-	"github.com/zhangm168520/vdk/av/transcode"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/av/avutil"
+	"github.com/zhangm168/vdk/av/pktque"
+	"github.com/zhangm168/vdk/av/transcode"
 )
 
 var Debug bool

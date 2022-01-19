@@ -966,7 +966,7 @@ func genatoms(filename, outfilename string) {
 		&ast.GenDecl{
 			Tok: token.IMPORT,
 			Specs: []ast.Spec{
-				&ast.ImportSpec{Path: &ast.BasicLit{Kind: token.STRING, Value: `"github.com/zhangm168520/vdk/utils/bits/pio"`}},
+				&ast.ImportSpec{Path: &ast.BasicLit{Kind: token.STRING, Value: `"github.com/zhangm168/vdk/utils/bits/pio"`}},
 			},
 		},
 		&ast.GenDecl{

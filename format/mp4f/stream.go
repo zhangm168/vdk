@@ -3,10 +3,10 @@ package mp4f
 import (
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/format/mp4"
-	"github.com/zhangm168520/vdk/format/mp4/mp4io"
-	"github.com/zhangm168520/vdk/format/mp4f/mp4fio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/format/mp4"
+	"github.com/zhangm168/vdk/format/mp4/mp4io"
+	"github.com/zhangm168/vdk/format/mp4f/mp4fio"
 )
 
 type Stream struct {

@@ -3,7 +3,7 @@ package fmp4io
 import (
 	"bytes"
 
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 const DREF = Tag(0x64726566)

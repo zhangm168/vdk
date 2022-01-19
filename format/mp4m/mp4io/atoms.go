@@ -3,7 +3,7 @@ package mp4io
 import (
 	"time"
 
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 const MOOF = Tag(0x6d6f6f66)

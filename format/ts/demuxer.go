@@ -6,11 +6,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/codec/aacparser"
-	"github.com/zhangm168520/vdk/codec/h264parser"
-	"github.com/zhangm168520/vdk/format/ts/tsio"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/codec/aacparser"
+	"github.com/zhangm168/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/format/ts/tsio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 type Demuxer struct {

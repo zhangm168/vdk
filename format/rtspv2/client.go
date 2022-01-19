@@ -18,12 +18,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/codec"
-	"github.com/zhangm168520/vdk/codec/aacparser"
-	"github.com/zhangm168520/vdk/codec/h264parser"
-	"github.com/zhangm168520/vdk/codec/h265parser"
-	"github.com/zhangm168520/vdk/format/rtsp/sdp"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/codec"
+	"github.com/zhangm168/vdk/codec/aacparser"
+	"github.com/zhangm168/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/codec/h265parser"
+	"github.com/zhangm168/vdk/format/rtsp/sdp"
 )
 
 const (

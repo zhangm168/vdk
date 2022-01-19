@@ -17,9 +17,9 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/av/avutil"
-	"github.com/zhangm168520/vdk/codec/aacparser"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/av/avutil"
+	"github.com/zhangm168/vdk/codec/aacparser"
 )
 
 const debug = false

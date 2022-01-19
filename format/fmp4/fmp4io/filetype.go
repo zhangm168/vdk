@@ -1,6 +1,6 @@
 package fmp4io
 
-import "github.com/zhangm168520/vdk/utils/bits/pio"
+import "github.com/zhangm168/vdk/utils/bits/pio"
 
 const FTYP = Tag(0x66747970)
 

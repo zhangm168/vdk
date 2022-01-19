@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 type StreamDescriptor struct {

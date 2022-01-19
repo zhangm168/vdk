@@ -1,11 +1,11 @@
 package fmp4
 
 import (
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/format/fmp4/fmp4io"
-	"github.com/zhangm168520/vdk/format/fmp4/fragment"
-	"github.com/zhangm168520/vdk/format/fmp4/timescale"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/format/fmp4/fmp4io"
+	"github.com/zhangm168/vdk/format/fmp4/fragment"
+	"github.com/zhangm168/vdk/format/fmp4/timescale"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 type fragmentWithData struct {

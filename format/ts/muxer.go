@@ -5,10 +5,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/codec/aacparser"
-	"github.com/zhangm168520/vdk/codec/h264parser"
-	"github.com/zhangm168520/vdk/format/ts/tsio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/codec/aacparser"
+	"github.com/zhangm168/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/format/ts/tsio"
 )
 
 var CodecTypes = []av.CodecType{av.H264, av.AAC}

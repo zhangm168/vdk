@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/utils/bits"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/utils/bits"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 const (

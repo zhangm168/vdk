@@ -3,8 +3,8 @@ package codec
 import (
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/codec/fake"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/codec/fake"
 )
 
 type OpusCodecData struct {

@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zhangm168520/vdk/av"
-	"github.com/zhangm168520/vdk/av/avutil"
-	"github.com/zhangm168520/vdk/format/flv"
-	"github.com/zhangm168520/vdk/format/flv/flvio"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/av"
+	"github.com/zhangm168/vdk/av/avutil"
+	"github.com/zhangm168/vdk/format/flv"
+	"github.com/zhangm168/vdk/format/flv/flvio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 )
 
 var Debug bool

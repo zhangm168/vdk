@@ -1,6 +1,6 @@
 package fmp4io
 
-import "github.com/zhangm168520/vdk/utils/bits/pio"
+import "github.com/zhangm168/vdk/utils/bits/pio"
 
 const MVEX = Tag(0x6d766578)
 

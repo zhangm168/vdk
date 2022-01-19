@@ -2,7 +2,7 @@ package tsio
 
 import (
 	"fmt"
-	"github.com/zhangm168520/vdk/utils/bits/pio"
+	"github.com/zhangm168/vdk/utils/bits/pio"
 	"io"
 	"time"
 )
