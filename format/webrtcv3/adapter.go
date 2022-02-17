@@ -125,7 +125,7 @@ func (element *Muxer) WriteHeader(streams []av.CodecData, sdp64 string) (string,
 				}
 			}else if i2.Type() == av.H265 {
 				track, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{
-					MimeType: "video/h264",
+					MimeType: "video/h265",
 				}, "pion-rtsp-video", "pion-rtsp-video")
 				if err != nil {
 					return "", err
@@ -237,7 +237,7 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 		case av.H265:
 			codec := tmp.codec.(h265parser.CodecData)
 			if pkt.IsKeyFrame {
-				pkt.Data = append([]byte{0, 0, 0, 1}, bytes.Join([][]byte{codec.SPS(), codec.PPS(), pkt.Data[4:]}, []byte{0, 0, 0, 1})...)
+				pkt.Data = append([]byte{0, 0, 0, 1}, bytes.Join([][]byte{codec.VPS(), codec.SPS(), codec.PPS(), pkt.Data[4:]}, []byte{0, 0, 0, 1})...)
 			} else {
 				pkt.Data = pkt.Data[4:]
 			}
