@@ -234,7 +234,6 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 			} else {
 				pkt.Data = pkt.Data[4:]
 			}
-			break
 		case av.H265:
 			codec := tmp.codec.(h265parser.CodecData)
 			if pkt.IsKeyFrame {
@@ -242,7 +241,6 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 			} else {
 				pkt.Data = pkt.Data[4:]
 			}
-			break
 		case av.PCM_ALAW:
 		case av.OPUS:
 		case av.PCM_MULAW:

@@ -2,12 +2,12 @@
 package h264parser
 
 import (
-	"testing"
 	"encoding/hex"
+	"testing"
 )
 
 func TestParser(t *testing.T) {
-	var ok bool
+	var ok int
 	var nalus [][]byte
 
 	annexbFrame, _ := hex.DecodeString("00000001223322330000000122332233223300000133000001000001")
