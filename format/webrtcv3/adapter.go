@@ -11,9 +11,9 @@ import (
 	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
 
+	"github.com/pion/webrtc/v3/pkg/media"
 	"github.com/zhangm168/vdk/av"
 	"github.com/zhangm168/vdk/codec/h264parser"
-	"github.com/pion/webrtc/v3/pkg/media"
 )
 
 var (
@@ -50,11 +50,14 @@ type Options struct {
 	PortMax uint16
 }
 
+/*
 func NewMuxer(options Options) *Muxer {
 	tmp := Muxer{Options: options, ClientACK: time.NewTimer(time.Second * 20), StreamACK: time.NewTimer(time.Second * 20), streams: make(map[int8]*Stream)}
 	//go tmp.WaitCloser()
 	return &tmp
 }
+ */
+
 func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*webrtc.PeerConnection, error) {
 	if len(element.Options.ICEServers) > 0 {
 		log.Println("Set ICEServers", element.Options.ICEServers)
@@ -75,7 +78,9 @@ func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*we
 	}
 	s := webrtc.SettingEngine{}
 	if element.Options.PortMin > 0 && element.Options.PortMax > 0 && element.Options.PortMax > element.Options.PortMin {
-		s.SetEphemeralUDPPortRange(element.Options.PortMin, element.Options.PortMax)
+		if err := s.SetEphemeralUDPPortRange(element.Options.PortMin, element.Options.PortMax); err != nil {
+			return nil, err
+		}
 		log.Println("Set UDP ports to", element.Options.PortMin, "..", element.Options.PortMax)
 	}
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
@@ -121,7 +126,7 @@ func (element *Muxer) WriteHeader(streams []av.CodecData, sdp64 string) (string,
 				}
 			}else if i2.Type() == av.H265 {
 				track, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{
-					MimeType: "video/h265",
+					MimeType: "video/h264",
 				}, "pion-rtsp-video", "pion-rtsp-video")
 				if err != nil {
 					return "", err
@@ -163,7 +168,8 @@ func (element *Muxer) WriteHeader(streams []av.CodecData, sdp64 string) (string,
 	peerConnection.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 		element.status = connectionState
 		if connectionState == webrtc.ICEConnectionStateDisconnected {
-			element.Close()
+			if err := element.Close(); err != nil {
+			}
 		}
 	})
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
@@ -202,7 +208,8 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 	var WritePacketSuccess bool
 	defer func() {
 		if !WritePacketSuccess {
-			element.Close()
+			if err := element.Close(); err != nil {
+			}
 		}
 	}()
 	if element.stop {
@@ -232,7 +239,7 @@ func (element *Muxer) WritePacket(pkt av.Packet) (err error) {
 		case av.H265:
 			codec := tmp.codec.(h265parser.CodecData)
 			if pkt.IsKeyFrame {
-				pkt.Data = append([]byte{0, 0, 0, 1}, bytes.Join([][]byte{codec.SPS(), codec.PPS(), codec.VPS(), pkt.Data[4:]}, []byte{0, 0, 0, 1})...)
+				pkt.Data = append([]byte{0, 0, 0, 1}, bytes.Join([][]byte{codec.SPS(), codec.PPS(), pkt.Data[4:]}, []byte{0, 0, 0, 1})...)
 			} else {
 				pkt.Data = pkt.Data[4:]
 			}
