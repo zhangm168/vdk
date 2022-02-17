@@ -56,7 +56,7 @@ func NewMuxer(options Options) *Muxer {
 	//go tmp.WaitCloser()
 	return &tmp
 }
- */
+*/
 
 func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*webrtc.PeerConnection, error) {
 	if len(element.Options.ICEServers) > 0 {
