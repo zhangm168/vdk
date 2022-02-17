@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
-	"github.com/zhangm168/vdk/codec/h265parser"
 	"log"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/pion/webrtc/v3/pkg/media"
 	"github.com/zhangm168/vdk/av"
 	"github.com/zhangm168/vdk/codec/h264parser"
+	"github.com/zhangm168/vdk/codec/h265parser"
 )
 
 var (
@@ -50,13 +50,12 @@ type Options struct {
 	PortMax uint16
 }
 
-/*
+
 func NewMuxer(options Options) *Muxer {
 	tmp := Muxer{Options: options, ClientACK: time.NewTimer(time.Second * 20), StreamACK: time.NewTimer(time.Second * 20), streams: make(map[int8]*Stream)}
 	//go tmp.WaitCloser()
 	return &tmp
 }
-*/
 
 func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*webrtc.PeerConnection, error) {
 	if len(element.Options.ICEServers) > 0 {
