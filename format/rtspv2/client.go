@@ -389,11 +389,12 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 			if err != nil {
 				return
 			}
-			if strings.Contains(string(line), "RTSP/1.0") && (!strings.Contains(string(line), "200") && !strings.Contains(string(line), "401")) {
+			if strings.Contains(string(line), "RTSP/1.0") && !(strings.Contains(string(line), "200") || strings.Contains(string(line), "302") || strings.Contains(string(line), "401")) {
 				time.Sleep(1 * time.Second)
 				err = errors.New("Camera send status" + string(line))
 				return
 			}
+
 			builder.Write(line)
 			if !isPrefix {
 				builder.WriteString("\r\n")
@@ -459,6 +460,8 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 				}
 			}
 		}
+		client.Println(builder.String())
+
 		if method == DESCRIBE {
 			if val, ok := res["Content-Length"]; ok {
 				contentLen, err = strconv.Atoi(strings.TrimSpace(val))
@@ -474,7 +477,37 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 				_, client.mediaSDP = sdp.Parse(string(client.SDPRaw))
 			}
 		}
-		client.Println(builder.String())
+		if val, ok := res["Location"]; ok {
+			// handle302
+			newLocation := strings.TrimSpace(val)
+			client.Println("RTSP Client Redirecting stream to other location:", newLocation)
+
+			options :=  RTSPClientOptions{
+				URL: newLocation,
+				Debug: client.options.Debug,
+				DialTimeout: client.options.DialTimeout,
+				ReadWriteTimeout: client.options.ReadWriteTimeout,
+				DisableAudio: client.options.DisableAudio,
+				OutgoingProxy: client.options.OutgoingProxy,
+				Keepalive: client.options.Keepalive,
+			}
+
+			client.Println("RTSP Client close..")
+			client.Close()
+
+			client.Println("RTSP Client new Dial..")
+			newClient, err := Dial(options)
+			if err != nil {
+				return err
+			}
+
+			client.Println("RTSP Client new Dial success")
+
+			client.options = options
+			client.conn = newClient.conn
+
+		}
+
 	}
 	return
 }
