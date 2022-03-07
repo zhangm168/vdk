@@ -102,6 +102,7 @@ type RTSPClientOptions struct {
 }
 
 func Dial(options RTSPClientOptions) (*RTSPClient, error) {
+	START:
 	client := &RTSPClient{
 		headers:             make(map[string]string),
 		Signals:             make(chan int, 100),
@@ -135,20 +136,31 @@ func Dial(options RTSPClientOptions) (*RTSPClient, error) {
 	}
 	client.conn = conn
 	client.connRW = bufio.NewReadWriter(bufio.NewReader(conn), bufio.NewWriter(conn))
-	err = client.request(OPTIONS, nil, client.pURL.String(), false, false)
+	_, err = client.request(OPTIONS, nil, client.pURL.String(), false, false)
 	if err != nil {
 		return nil, err
 	}
-	err = client.request(DESCRIBE, map[string]string{"Accept": "application/sdp"}, client.pURL.String(), false, false)
+	var newUri string
+	newUri, err = client.request(DESCRIBE, map[string]string{"Accept": "application/sdp"}, client.pURL.String(), false, false)
 	if err != nil {
 		return nil, err
 	}
+	if len(newUri)>0{
+		client.Close()
+
+		client.Println("重定向到新的URL:", newUri)
+
+		//重定向到新的URL
+		options.URL = newUri
+		goto START
+	}
+
 	var ch int
 	for _, i2 := range client.mediaSDP {
 		if (i2.AVType != VIDEO && i2.AVType != AUDIO) || (client.options.DisableAudio && i2.AVType == AUDIO) {
 			continue
 		}
-		err = client.request(SETUP, map[string]string{"Transport": "RTP/AVP/TCP;unicast;interleaved=" + strconv.Itoa(ch) + "-" + strconv.Itoa(ch+1)}, client.ControlTrack(i2.Control), false, false)
+		_, err = client.request(SETUP, map[string]string{"Transport": "RTP/AVP/TCP;unicast;interleaved=" + strconv.Itoa(ch) + "-" + strconv.Itoa(ch+1)}, client.ControlTrack(i2.Control), false, false)
 		if err != nil {
 			return nil, err
 		}
@@ -229,7 +241,7 @@ func Dial(options RTSPClientOptions) (*RTSPClient, error) {
 		ch += 2
 	}
 
-	err = client.request(PLAY, nil, client.control, false, false)
+	_, err = client.request(PLAY, nil, client.control, false, false)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +274,7 @@ func (client *RTSPClient) startStream() {
 			return
 		}
 		if int(time.Now().Sub(timer).Seconds()) > client.keepalive {
-			err := client.request(OPTIONS, map[string]string{"Require": "implicit-play"}, client.control, false, true)
+			_, err := client.request(OPTIONS, map[string]string{"Require": "implicit-play"}, client.control, false, true)
 			if err != nil {
 				client.Println("RTSP Client RTP keep-alive", err)
 				return
@@ -347,7 +359,10 @@ func (client *RTSPClient) startStream() {
 	}
 }
 
-func (client *RTSPClient) request(method string, customHeaders map[string]string, uri string, one bool, nores bool) (err error) {
+func (client *RTSPClient) request(method string, customHeaders map[string]string, uri string, one bool, nores bool) (newUri string,err error) {
+
+	newUri =""
+
 	err = client.conn.SetDeadline(time.Now().Add(client.options.ReadWriteTimeout))
 	if err != nil {
 		return
@@ -426,7 +441,7 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 				client.clientBasic = true
 			}
 			if !one {
-				err = client.request(method, customHeaders, uri, true, false)
+				_, err = client.request(method, customHeaders, uri, true, false)
 				return
 			}
 			err = errors.New("RTSP Client Unauthorized 401")
@@ -481,7 +496,9 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 			// handle302
 			newLocation := strings.TrimSpace(val)
 			client.Println("RTSP Client Redirecting stream to other location:", newLocation)
+			newUri = newLocation
 
+			/*
 			options :=  RTSPClientOptions{
 				URL: newLocation,
 				Debug: client.options.Debug,
@@ -505,9 +522,10 @@ func (client *RTSPClient) request(method string, customHeaders map[string]string
 
 			client.options = options
 			client.conn = newClient.conn
-
+			client.parseURL(rawURL string)
+			client.audioCodec = newClient.audioCodec
+			*/
 		}
-
 	}
 	return
 }
