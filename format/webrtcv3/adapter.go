@@ -86,7 +86,7 @@ func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*we
 				{Type: "transport-cc"},
 			},
 		},
-		PayloadType: 124,
+		PayloadType: 104,
 	}
 	h265Codec2 := webrtc.RTPCodecParameters{
 		RTPCodecCapability: webrtc.RTPCodecCapability{
@@ -102,7 +102,7 @@ func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*we
 				{Type: "transport-cc"},
 			},
 		},
-		PayloadType: 126,
+		PayloadType: 104,
 	}
 
 	if err := m.RegisterCodec(h265Codec1, webrtc.RTPCodecTypeVideo); err != nil {
