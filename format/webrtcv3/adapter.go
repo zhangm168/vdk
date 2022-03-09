@@ -50,7 +50,6 @@ type Options struct {
 	PortMax uint16
 }
 
-
 func NewMuxer(options Options) *Muxer {
 	tmp := Muxer{Options: options, ClientACK: time.NewTimer(time.Second * 20), StreamACK: time.NewTimer(time.Second * 20), streams: make(map[int8]*Stream)}
 	//go tmp.WaitCloser()
@@ -71,6 +70,48 @@ func (element *Muxer) NewPeerConnection(configuration webrtc.Configuration) (*we
 	if err := m.RegisterDefaultCodecs(); err != nil {
 		return nil, err
 	}
+
+	//添加h265支持
+	h265Codec1 := webrtc.RTPCodecParameters{
+		RTPCodecCapability: webrtc.RTPCodecCapability{
+			webrtc.MimeTypeH265,
+			90000,
+			0,
+			"level-asymmetry-allowed=1;packetization-mode=1",
+			[]webrtc.RTCPFeedback{
+				{Type: "nack"},
+				{Type: "nack", Parameter: "pli"},
+				{Type: "ccm", Parameter: "fir"},
+				{Type: "goog-remb"},
+				{Type: "transport-cc"},
+			},
+		},
+		PayloadType: 124,
+	}
+	h265Codec2 := webrtc.RTPCodecParameters{
+		RTPCodecCapability: webrtc.RTPCodecCapability{
+			webrtc.MimeTypeH265,
+			90000,
+			0,
+			"level-asymmetry-allowed=1;packetization-mode=0",
+			[]webrtc.RTCPFeedback{
+				{Type: "nack"},
+				{Type: "nack", Parameter: "pli"},
+				{Type: "ccm", Parameter: "fir"},
+				{Type: "goog-remb"},
+				{Type: "transport-cc"},
+			},
+		},
+		PayloadType: 126,
+	}
+
+	if err := m.RegisterCodec(h265Codec1, webrtc.RTPCodecTypeVideo); err != nil {
+		return nil, err
+	}
+	if err := m.RegisterCodec(h265Codec2, webrtc.RTPCodecTypeVideo); err != nil {
+		return nil, err
+	}
+
 	i := &interceptor.Registry{}
 	if err := webrtc.RegisterDefaultInterceptors(m, i); err != nil {
 		return nil, err
@@ -123,7 +164,7 @@ func (element *Muxer) WriteHeader(streams []av.CodecData, sdp64 string) (string,
 				if _, err = peerConnection.AddTrack(track); err != nil {
 					return "", err
 				}
-			}else if i2.Type() == av.H265 {
+			} else if i2.Type() == av.H265 {
 				track, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{
 					MimeType: "video/h265",
 				}, "pion-rtsp-video", "pion-rtsp-video")
